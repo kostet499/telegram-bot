@@ -71,7 +71,6 @@ def main():
 
     # # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
-
     updater.start_polling()
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,

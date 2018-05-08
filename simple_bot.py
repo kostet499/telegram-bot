@@ -1,13 +1,14 @@
 import collections
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import stf_parser
-
+import database_script
 
 MARKS = collections.defaultdict(list)
 
 
 def start(bot, update):
     update.message.reply_text('Hi, @{}!'.format(update.effective_user.username))
+    database_script.check_user_to_be_in_db(update.effective_user.username)
 
 
 def echo(bot, update):

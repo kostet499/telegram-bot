@@ -4,7 +4,10 @@ import re
 
 def get_html_doc(url):
     """Open the url and return a string"""
-    response = urllib.request.urlopen(url)
+    try:
+        response = urllib.request.urlopen(url)
+    except ConnectionError:
+        return None
     html = str(response.read())
     return html
 
@@ -15,7 +18,7 @@ def get_answer_quantity(html):
     try:
         quest_sum = quest_sum.group(0)
     except AttributeError:
-        print('No answercount tag found')
+        return None
     quest_sum = re.sub(r'h2|[^0-9]', '', quest_sum)
     return quest_sum
 

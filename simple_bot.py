@@ -1,5 +1,7 @@
 import collections
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import stf_parser
+
 
 MARKS = collections.defaultdict(list)
 
@@ -19,6 +21,17 @@ def add_mark(bot, update, args):
             'Successfully added {} for @{}'.format(args[1], args[0]))
     else:
         update.message.reply_text('Sorry, u can\'t add marks! :(')
+
+
+def count_answers(bot, update, args):
+    html = stf_parser.get_html_doc(args)
+    if html is None:
+        update.message.reply_text("Connection error")
+
+    answer = stf_parser.get_answer_quantity(html)
+    if answer is None:
+        update.message.reply_text("It is not stackoverflow question link")
+    update.message.reply_text(answer)
 
 
 def show_marks(bot, update, args):
@@ -68,7 +81,8 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("add_mark", add_mark, pass_args=True))
     dp.add_handler(CommandHandler("show_marks", show_marks, pass_args=True))
-
+    dp.add_handler(CommandHandler('count_answers',
+                                  count_answers, pass_args=True))
     # # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
     updater.start_polling()

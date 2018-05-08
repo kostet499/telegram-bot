@@ -70,7 +70,7 @@ def show_marks(bot, update, args):
             if sum(marks) / len(marks) < 5:
                 update.message.reply_sticker('CAADAgADGAIAAmkSAAJWHyklsyrFUQI')
         else:
-            update.message.reply_text('Sorry, no marks for you')
+            update.message.reply_text('Sorry, no marks for yo')
 
 
 def main():

@@ -24,7 +24,7 @@ def add_mark(bot, update, args):
 
 
 def count_answers(bot, update, args):
-    html = stf_parser.get_html_doc(args)
+    html = stf_parser.get_html_doc(args[0])
     if html is None:
         update.message.reply_text("Connection error")
 

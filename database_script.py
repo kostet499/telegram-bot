@@ -34,4 +34,5 @@ def check_user_to_be_in_db(username):
     if row is None:
         query = "INSERT INTO users(name) VALUES (\"%s\");" % username
         conn.cursor().execute(query)
-
+        return True
+    return False

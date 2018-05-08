@@ -35,10 +35,3 @@ def check_user_to_be_in_db(username):
         query = "INSERT INTO users(name) VALUES (\"%s\");" % username
         conn.cursor().execute(query)
 
-
-cur = conn.cursor()
-create_user_table(conn)
-cur = conn.cursor()
-create_rel_table(conn)
-conn.commit()
-conn.close()

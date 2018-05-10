@@ -20,10 +20,12 @@ def count_answers(bot, update, args):
     update.message.reply_text(answer)
 
 
+def callback_check_question
+
+
 def unknown(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text='It is wrong command')
-
 
 
 def main():

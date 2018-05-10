@@ -72,7 +72,7 @@ def compare_answers(user_id, question_id, answer_count):
 
     query = '''SELECT ans_number FROM user_question
               WHERE user_id = %d and
-              question_id  = %d ''' % (user_id, question_id)
+              question_id  = %d ''' % user_id, question_id
 
     answer = cur.execute(query).fetchone()
     if answer is not None and answer == answer_count:
@@ -80,11 +80,11 @@ def compare_answers(user_id, question_id, answer_count):
     if answer is None:
         query = """INSERT INTO user_question(user_id, question_id, ans_number)
                   VALUES ( %d, %d , %d);""" \
-                % (user_id, question_id, answer_count)
+                % user_id, question_id, answer_count
     else:
         query = """UPDATE user_question SET ans_number = %d
                       WHERE user_id = %d and question_id = %d
-                   """ % (user_id, question_id, answer_count)
+                   """ % user_id, question_id, answer_count
 
     cur.execute(query)
     conn.commit()
@@ -110,7 +110,7 @@ def delete_question(user_id, question_id):
 
     query = '''DELETE FROM user_question
                   WHERE user_id = %d and
-                  question_id  = %d ''' % (user_id, question_id)
+                  question_id  = %d ''' % user_id, question_id
     try:
         cur.execute(query)
         conn.commit()

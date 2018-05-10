@@ -39,9 +39,8 @@ def callback_check_question(bot, job):
                                                new_answer_quantity):
                 continue
 
-            text_message = "New answers \n(\"%s\")" \
-                           % (form_link(question_id))
-        bot.send_message(chat_id='@' + name, text=text_message)
+            text_message = "New answers \n(\"%s\")" % (form_link(question_id))
+            bot.send_message(chat_id='@' + name, text=text_message)
 
 
 def add_question(bot, update, args):

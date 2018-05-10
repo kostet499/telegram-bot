@@ -53,7 +53,7 @@ def check_user_to_be_in_db(username):
 
 
 def extract_last_answer_count(user_id, question_id):
-    """Extract last answer count of the question from database """
+    """Extract last answer count of the question from database and update it"""
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
 
@@ -64,6 +64,15 @@ def extract_last_answer_count(user_id, question_id):
     answer = cur.execute(query).fetchone()
     if answer is None:
         answer = 0
+        query = """INSERT INTO user_question(user_id, question_id, ans_number)
+                  VALUES ((\"%s\"), (\"%s\"), 0);""" % (user_id, question_id)
+    else:
+        query = """UPDATE user_question SET ans_number = (\"%s\")
+                      WHERE user_id = (\"%s\") and question_id = (\"%s\")
+                   """ % (user_id, question_id, answer)
+
+    cur.execute(query)
+    conn.commit()
     conn.close()
     return answer
 

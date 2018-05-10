@@ -10,6 +10,7 @@ def start(bot, update):
     update.message.reply_text('Hi, @{}!'.format(update.effective_user.username))
     if database_script.check_user_to_be_in_db(update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')
+        monitoring_list[update.effective_user.username] = set()
 
 
 def count_answers(bot, update, args):
@@ -48,7 +49,7 @@ def add_question(bot, update, args):
     try:
         question_id = int(args[0])
     except Exception:
-        question_id = int(re.search(r'/[^0-9]*/', args[0]).group(0))
+        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
     user_name = update.effective_user.username
     monitoring_list[user_name].add(question_id)
     database_script.add_question(question_id)
@@ -60,7 +61,7 @@ def del_question(bot, update, args):
     try:
         question_id = int(args[0])
     except Exception:
-        question_id = int(re.search(r'/[^0-9]*/', args[0]).group(0))
+        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
     try:
         user_name = update.effective_user.username
         monitoring_list[user_name].remove(question_id)
@@ -82,7 +83,8 @@ def fill_monitoring_list():
     """Fill monitoring list"""
     names = database_script.get_all_user_names()
     for name in names:
-        monitoring_list[name] = database_script.get_question_by_user_id(name)
+        user_id = database_script.get_user_id(name)
+        monitoring_list[name] = database_script.get_question_by_user_id(user_id)
 
 
 def main():
@@ -101,7 +103,7 @@ def main():
     dp.add_handler(MessageHandler(Filters.command, unknown))
 
     updater.job_queue.run_repeating(callback_check_question,
-                                    interval=60,
+                                    interval=10,
                                     first=0)
     updater.start_polling()
 

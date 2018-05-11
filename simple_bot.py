@@ -14,10 +14,13 @@ def start(bot, update):
 
 
 def count_answers(bot, update, args):
-    if args[0] is None:
-        update.message.reply_text("Connection error")
+    question_id = 0
+    try:
+        question_id = int(args[0])
+    except Exception:
+        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
 
-    answer = stf_parser.get_answer_quantity(args[0], True)
+    answer = stf_parser.get_answer_quantity(form_link(question_id), True)
     if answer is None:
         update.message.reply_text("It is not stackoverflow question link")
     update.message.reply_text(str(answer))
@@ -48,7 +51,7 @@ def add_question(bot, update, args):
         question_id = int(args[0])
     except Exception:
         question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
-    update.message.reply_text('kekel')
+    bot.send_message(chat_id='@' + update.effective_user.username, text='kekel')
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     user_name = update.effective_user.username
     monitoring_list[user_name].add(question_id)

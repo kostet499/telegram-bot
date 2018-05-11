@@ -53,13 +53,11 @@ def callback_check_question(bot, job):
 
 def add_question(bot, update, args):
     question_id = retreive_question_id(args[0])
-    bot.send_message(chat_id=update.message.chat_id, text='kekel')
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
-    user_name = update.effective_user.username
-    monitoring_list[user_name].add(question_id)
+    chat_id = update.message.chat_id
+    monitoring_list[chat_id].add(question_id)
     database_script.add_question(question_id)
-    user_id = database_script.get_user_id(user_name)
-    database_script.insert_into_user_question(user_id, question_id, ans_count)
+    database_script.insert_into_user_question(chat_id, question_id, ans_count)
     message = 'Answers ' + str(ans_count)
     update.message.reply_text(message)
 

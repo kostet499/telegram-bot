@@ -4,7 +4,7 @@ def create_user_table(conn):
     cur.execute('DROP TABLE IF EXISTS users')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INT NOT NULL PRIMARY KEY,
             name VARCHAR(255)
         );
     ''')
@@ -31,13 +31,14 @@ def create_question_table(conn):
           ''')
 
 
-def check_user_to_be_in_db(username):
+def check_user_to_be_in_db(chat_id, username):
     """Add user to database if he is new"""
     query = "SELECT name FROM users WHERE name = (\"%s\")" % username
     cur.execute(query)
     row = cur.fetchone()
     if row is None:
-        query = "INSERT INTO users(name) VALUES (\"%s\");" % username
+        query = "INSERT INTO users(id, name) VALUES ({0}, {1});".format(chat_id,
+                                                                        username)
         cur.execute(query)
         conn.commit()        
         return True
@@ -99,11 +100,10 @@ def delete_question(user_id, question_id):
         conn.commit()
     except Exception:
         pass
-        
 
 
-def get_all_user_names():
-    query = "SELECT name FROM users"
+def get_all_user_id():
+    query = "SELECT id FROM users"
     return list(cur.execute(query).fetchall())
 
 
@@ -111,8 +111,7 @@ def get_question_by_user_id(user_id):
     query = """SELECT question_id from user_question
             WHERE user_id = {0}
             """.format(user_id)
-    answer = set(cur.execute(query).fetchall())
-    return answer
+    return cur.execute(query).fetchall()
 
 
 def close_database():

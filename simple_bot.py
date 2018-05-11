@@ -8,9 +8,10 @@ monitoring_list = dict()
 
 def start(bot, update):
     update.message.reply_text('Hi, @{}!'.format(update.effective_user.username))
-    if database_script.check_user_to_be_in_db(update.effective_user.username):
+    if database_script.check_user_to_be_in_db(update.message.chat_id,
+                                              update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')
-        monitoring_list[update.effective_user.username] = set()
+        monitoring_list[update.message.chat_id] = set()
 
 
 def count_answers(bot, update, args):
@@ -37,23 +38,22 @@ def retreive_question_id(link):
 
 
 def callback_check_question(bot, job):
-    for name, questions in monitoring_list.items():
-        user_id = database_script.get_user_id(name)
+    for chat_id, questions in monitoring_list.items():
         for question_id in questions:
-            new_answer_quantity = \
-                stf_parser.get_answer_quantity(form_link(question_id), True)
-            if database_script.compare_answers(user_id,
+            new_answer_quantity = stf_parser.get_answer_quantity(
+                form_link(question_id), True)
+            if database_script.compare_answers(chat_id,
                                                question_id,
                                                new_answer_quantity):
                 continue
 
             text_message = "New answers \n(\"%s\")" % (form_link(question_id))
-            bot.send_message(chat_id='@' + name, text=text_message)
+            bot.send_message(chat_id=chat_id, text=text_message)
 
 
 def add_question(bot, update, args):
     question_id = retreive_question_id(args[0])
-    bot.send_message(chat_id='@' + update.effective_user.username, text='kekel')
+    bot.send_message(chat_id=update.message.chat_id, text='kekel')
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     user_name = update.effective_user.username
     monitoring_list[user_name].add(question_id)
@@ -68,14 +68,13 @@ def del_question(bot, update, args):
     """Delete the question from monitoring list"""
     question_id = retreive_question_id(args[0])
     try:
-        user_name = update.effective_user.username
-        monitoring_list[user_name].remove(question_id)
-        user_id = database_script.get_user_id(user_name)
-        database_script.delete_question(user_id, question_id)
-        bot.send_message(chat_id=update.message.chat_id,
+        chat_id = update.message.chat_id
+        monitoring_list[chat_id].remove(question_id)
+        database_script.delete_question(chat_id, question_id)
+        bot.send_message(chat_id=chat_id,
                          text="Successfully deleted question")
     except Exception:
-        bot.send_message(chat_id=update.message.chat_id,
+        bot.send_message(chat_id=chat_id,
                          text="Sorry, no question to delete")
 
 
@@ -86,10 +85,9 @@ def unknown(bot, update):
 
 def fill_monitoring_list():
     """Fill monitoring list"""
-    names = database_script.get_all_user_names()
-    for name in names:
-        user_id = database_script.get_user_id(name)
-        monitoring_list[name] = database_script.get_question_by_user_id(user_id)
+    for chat_id in database_script.get_all_user_id():
+        monitoring_list[chat_id] = set(
+            database_script.get_question_by_user_id(chat_id))
 
 
 def main():

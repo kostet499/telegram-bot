@@ -71,16 +71,16 @@ def compare_answers(user_id, question_id, answer_count):
     cur = conn.cursor()
 
     query = '''SELECT ans_number FROM user_question
-              WHERE user_id = %d and
-              question_id  = %d ''' % user_id, question_id
+              WHERE user_id = {0} and
+              question_id  = {1} '''.format(user_id, question_id)
 
     answer = cur.execute(query).fetchone()
     if answer == answer_count:
         return True
 
-    query = """UPDATE user_question SET ans_number = %d
-              WHERE user_id = %d and question_id = %d
-            """ % user_id, question_id, answer_count
+    query = """UPDATE user_question SET ans_number = {2}
+              WHERE user_id = {0} and question_id = {1}
+            """.format(user_id, question_id, answer_count)
 
     cur.execute(query)
     conn.commit()
@@ -93,8 +93,8 @@ def insert_into_user_question(user_id, question_id, answer_count):
     cur = conn.cursor()
 
     query = """INSERT INTO user_question(user_id, question_id, ans_number)
-                      VALUES ( %d, %d , %d);""" \
-            % user_id, question_id, answer_count
+                      VALUES ( {0}, {1} , {2});""".format(user_id, question_id,
+                                                          answer_count)
 
     cur.execute(query)
     conn.commit()
@@ -104,7 +104,7 @@ def insert_into_user_question(user_id, question_id, answer_count):
 def add_question(question_id):
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
-    query = "INSERT INTO questions(id) VALUES (%d)" % question_id
+    query = "INSERT INTO questions(id) VALUES ({0})".format(question_id)
     try:
         cur.execute(query)
         conn.commit()
@@ -118,8 +118,8 @@ def delete_question(user_id, question_id):
     cur = conn.cursor()
 
     query = '''DELETE FROM user_question
-                  WHERE user_id = %d and
-                  question_id  = %d ''' % user_id, question_id
+                  WHERE user_id = {0} and
+                  question_id  = {1} '''.format(user_id, question_id)
     try:
         cur.execute(query)
         conn.commit()
@@ -142,8 +142,8 @@ def get_question_by_user_id(user_id):
     cur = conn.cursor()
 
     query = """SELECT question_id from user_question
-            WHERE user_id = %d
-            """ % user_id
+            WHERE user_id = {0}
+            """.format(user_id)
     answer = set(cur.execute(query).fetchall())
     conn.close()
     return answer

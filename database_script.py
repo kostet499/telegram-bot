@@ -72,24 +72,24 @@ def compare_answers(user_id, question_id, answer_count):
 
 
 def insert_into_user_question(user_id, question_id, answer_count):
+    query = """INSERT INTO user_question(user_id, question_id, ans_number)
+                         VALUES ( {0}, {1} , {2});""".format(user_id,
+                                                             question_id,
+                                                             answer_count)
     try:
-        query = """INSERT INTO user_question(user_id, question_id, ans_number)
-                      VALUES ( {0}, {1} , {2});""".format(user_id, question_id,
-                                                          answer_count)
+        cur.execute(query)
+        conn.commit()
     except Exception:
-        pass
-
-    cur.execute(query)
-    conn.commit()
+        return
 
 
 def add_question(question_id):
+    query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
     try:
-        query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
+        cur.execute(query)
+        conn.commit()
     except Exception:
-        pass
-    cur.execute(query)
-    conn.commit()
+        return
 
 
 def delete_question(user_id, question_id):
@@ -100,7 +100,7 @@ def delete_question(user_id, question_id):
         cur.execute(query)
         conn.commit()
     except Exception:
-        pass
+        return
 
 
 def get_all_user_id():

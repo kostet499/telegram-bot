@@ -1,8 +1,6 @@
 import sqlite3
 
-
 def create_user_table(conn):
-    cur = conn.cursor()
     cur.execute('DROP TABLE IF EXISTS users')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -13,7 +11,6 @@ def create_user_table(conn):
 
 
 def create_rel_table(conn):
-    cur = conn.cursor()
     cur.execute('''
           CREATE TABLE IF NOT EXISTS user_question(
               user_id INT NOT NULL,
@@ -27,7 +24,6 @@ def create_rel_table(conn):
 
 
 def create_question_table(conn):
-    cur = conn.cursor()
     cur.execute('''
               CREATE TABLE IF NOT EXISTS questions(
                 id INTEGER NOT NULL PRIMARY KEY
@@ -37,38 +33,27 @@ def create_question_table(conn):
 
 def check_user_to_be_in_db(username):
     """Add user to database if he is new"""
-    conn = sqlite3.connect('stackquestion.db')
     query = "SELECT name FROM users WHERE name = (\"%s\")" % username
-    cur = conn.cursor()
     cur.execute(query)
     row = cur.fetchone()
     if row is None:
         query = "INSERT INTO users(name) VALUES (\"%s\");" % username
-        conn.cursor().execute(query)
-        conn.commit()
-        conn.close()
+        cur.execute(query)
+        conn.commit()        
         return True
-    conn.close()
+
     return False
 
 
 def get_user_id(username):
-    conn = sqlite3.connect('stackquestion.db')
     query = "SELECT id FROM users WHERE name = (\"%s\")" % username
-    cur = conn.cursor()
-    cur.execute(query)
-    user_id = cur.fetchone()
-    conn.close()
-    return user_id
-
+    return cur.execute(query).fetchone()
+    
 
 def compare_answers(user_id, question_id, answer_count):
     """Compare last answer count with new
      of the question from database
      and update it"""
-
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
 
     query = '''SELECT ans_number FROM user_question
               WHERE user_id = {0} and
@@ -84,39 +69,28 @@ def compare_answers(user_id, question_id, answer_count):
 
     cur.execute(query)
     conn.commit()
-    conn.close()
     return False
 
 
 def insert_into_user_question(user_id, question_id, answer_count):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
-
     query = """INSERT INTO user_question(user_id, question_id, ans_number)
                       VALUES ( {0}, {1} , {2});""".format(user_id, question_id,
                                                           answer_count)
 
     cur.execute(query)
     conn.commit()
-    conn.close()
 
 
 def add_question(question_id):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     query = "INSERT INTO questions(id) VALUES ({0})".format(question_id)
     try:
         cur.execute(query)
         conn.commit()
     except Exception:
         pass
-    conn.close()
 
 
 def delete_question(user_id, question_id):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
-
     query = '''DELETE FROM user_question
                   WHERE user_id = {0} and
                   question_id  = {1} '''.format(user_id, question_id)
@@ -124,34 +98,30 @@ def delete_question(user_id, question_id):
         cur.execute(query)
         conn.commit()
     except Exception:
-        conn.close()
+        pass
+        
 
 
 def get_all_user_names():
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
-
     query = "SELECT name FROM users"
-    answer = list(cur.execute(query).fetchall())
-    conn.close()
-    return answer
+    return list(cur.execute(query).fetchall())
 
 
 def get_question_by_user_id(user_id):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
-
     query = """SELECT question_id from user_question
             WHERE user_id = {0}
             """.format(user_id)
     answer = set(cur.execute(query).fetchall())
-    conn.close()
     return answer
 
 
+def close_database():
+    conn.close()
+
+
 conn = sqlite3.connect('stackquestion.db')
+cur = conn.cursor()
 create_question_table(conn)
 create_user_table(conn)
 create_rel_table(conn)
 conn.commit()
-conn.close()

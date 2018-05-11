@@ -14,12 +14,7 @@ def start(bot, update):
 
 
 def count_answers(bot, update, args):
-    question_id = 0
-    try:
-        question_id = int(args[0])
-    except Exception:
-        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
-
+    question_id = retreive_question_id(args[0])
     answer = stf_parser.get_answer_quantity(form_link(question_id), True)
     if answer is None:
         update.message.reply_text("It is not stackoverflow question link")
@@ -28,6 +23,17 @@ def count_answers(bot, update, args):
 
 def form_link(question_id):
     return "https://stackoverflow.com/questions/" + str(question_id) + '/'
+
+
+def retreive_question_id(link):
+    question_id = 0
+    try:
+        question_id = int(link)
+    except Exception:
+        question_id = int(
+            re.search(r'[0-9]+', re.search(r'/[0-9]+/', link).group(0)).group(
+                0))
+    return question_id
 
 
 def callback_check_question(bot, job):
@@ -46,11 +52,7 @@ def callback_check_question(bot, job):
 
 
 def add_question(bot, update, args):
-    question_id = 0
-    try:
-        question_id = int(args[0])
-    except Exception:
-        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
+    question_id = retreive_question_id(args[0])
     bot.send_message(chat_id='@' + update.effective_user.username, text='kekel')
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     user_name = update.effective_user.username
@@ -64,11 +66,7 @@ def add_question(bot, update, args):
 
 def del_question(bot, update, args):
     """Delete the question from monitoring list"""
-    question_id = 0
-    try:
-        question_id = int(args[0])
-    except Exception:
-        question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
+    question_id = retreive_question_id(args[0])
     try:
         user_name = update.effective_user.username
         monitoring_list[user_name].remove(question_id)

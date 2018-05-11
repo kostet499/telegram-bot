@@ -52,13 +52,14 @@ def compare_answers(user_id, question_id, answer_count):
     """Compare last answer count with new
      of the question from database
      and update it"""
-
+    connection = sqlite3.connect('stackquestion.db')
+    cursor = connection.cursor()
     query = '''SELECT ans_number FROM user_question
               WHERE user_id = {0} and
               question_id  = {1};'''.format(user_id, question_id)
 
-    cur.execute(query)
-    answer = cur.fetchone()[2]
+    cursor.execute(query)
+    answer = cursor.fetchone()[0]
     if answer == answer_count:
         return True
 
@@ -66,8 +67,9 @@ def compare_answers(user_id, question_id, answer_count):
               WHERE user_id = {0} and question_id = {1};
             """.format(user_id, question_id, answer_count)
 
-    cur.execute(query)
-    conn.commit()
+    cursor.execute(query)
+    connection.commit()
+    connection.close()
     return False
 
 

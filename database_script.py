@@ -101,7 +101,11 @@ def delete_question(user_id, question_id):
 
 def get_all_user_id():
     query = "SELECT id FROM users;"
-    return list(cur.execute(query).fetchall())
+    cur.execute(query)
+    answer = list()
+    for x in cur.fetchall():
+        answer.append(x[0])
+    return list(answer)
 
 
 def get_question_by_user_id(user_id):
@@ -109,7 +113,9 @@ def get_question_by_user_id(user_id):
             WHERE user_id = {};
             """.format(user_id)
     cur.execute(query)
-    answer = cur.fetchall()
+    answer = list()
+    for x in cur.fetchall():
+        answer.append(x[1])
     return answer
 
 

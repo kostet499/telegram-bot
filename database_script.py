@@ -60,7 +60,8 @@ def compare_answers(user_id, question_id, answer_count):
               WHERE user_id = {0} and
               question_id  = {1};'''.format(user_id, question_id)
 
-    answer = cur.execute(query).fetchone()
+    cur.execute(query)
+    answer = cur.fetchone()[2]
     if answer == answer_count:
         return True
 

@@ -78,6 +78,7 @@ def insert_into_user_question(user_id, question_id, answer_count):
                                                           answer_count)
     except Exception:
         raise UserWarning
+
     cur.execute(query)
     conn.commit()
 

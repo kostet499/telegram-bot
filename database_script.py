@@ -119,7 +119,7 @@ def get_question_by_user_id(user_id):
     cur.execute(query)
     answer = list()
     for x in cur.fetchall():
-        answer.append(x[1])
+        answer.append(x[0])
     return answer
 
 

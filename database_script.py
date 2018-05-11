@@ -38,7 +38,7 @@ def check_user_to_be_in_db(chat_id, username):
     row = cur.fetchone()
     if row is None:
         query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(
-            chat_id,
+            str(chat_id),
             username)
         cur.execute(query)
         conn.commit()        

@@ -12,8 +12,10 @@ def get_html_doc(url):
     return html
 
 
-def get_answer_quantity(html):
+def get_answer_quantity(html, is_link):
     """"Extract the quantity of answers"""
+    if is_link:
+        html = get_html_doc(html)
     quest_sum = re.search(r'<h2 data-answercount="[0-9]*">', html)
     try:
         quest_sum = quest_sum.group(0)

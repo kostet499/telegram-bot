@@ -75,21 +75,30 @@ def compare_answers(user_id, question_id, answer_count):
               question_id  = %d ''' % user_id, question_id
 
     answer = cur.execute(query).fetchone()
-    if answer is not None and answer == answer_count:
+    if answer == answer_count:
         return True
-    if answer is None:
-        query = """INSERT INTO user_question(user_id, question_id, ans_number)
-                  VALUES ( %d, %d , %d);""" \
-                % user_id, question_id, answer_count
-    else:
-        query = """UPDATE user_question SET ans_number = %d
-                      WHERE user_id = %d and question_id = %d
-                   """ % user_id, question_id, answer_count
+
+    query = """UPDATE user_question SET ans_number = %d
+              WHERE user_id = %d and question_id = %d
+            """ % user_id, question_id, answer_count
 
     cur.execute(query)
     conn.commit()
     conn.close()
     return False
+
+
+def insert_into_user_question(user_id, question_id, answer_count):
+    conn = sqlite3.connect('stackquestion.db')
+    cur = conn.cursor()
+
+    query = """INSERT INTO user_question(user_id, question_id, ans_number)
+                      VALUES ( %d, %d , %d);""" \
+            % user_id, question_id, answer_count
+
+    cur.execute(query)
+    conn.commit()
+    conn.close()
 
 
 def add_question(question_id):

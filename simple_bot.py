@@ -14,11 +14,10 @@ def start(bot, update):
 
 
 def count_answers(bot, update, args):
-    html = stf_parser.get_html_doc(args[0])
-    if html is None:
+    if args[0] is None:
         update.message.reply_text("Connection error")
 
-    answer = stf_parser.get_answer_quantity(html)
+    answer = stf_parser.get_answer_quantity(args[0], True)
     if answer is None:
         update.message.reply_text("It is not stackoverflow question link")
     update.message.reply_text(answer)
@@ -33,7 +32,7 @@ def callback_check_question(bot, job):
         user_id = database_script.get_user_id(name)
         for question_id in questions:
             new_answer_quantity = \
-                stf_parser.get_answer_quantity(form_link(question_id))
+                stf_parser.get_answer_quantity(form_link(question_id), True)
             if database_script.compare_answers(user_id,
                                                question_id,
                                                new_answer_quantity):
@@ -49,9 +48,13 @@ def add_question(bot, update, args):
         question_id = int(args[0])
     except Exception:
         question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
+
+    ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     user_name = update.effective_user.username
     monitoring_list[user_name].add(question_id)
     database_script.add_question(question_id)
+    user_id = database_script.get_user_id(user_name)
+    database_script.insert_into_user_question(user_id, question_id, ans_count)
 
 
 def del_question(bot, update, args):

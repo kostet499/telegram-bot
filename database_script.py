@@ -77,7 +77,7 @@ def insert_into_user_question(user_id, question_id, answer_count):
                       VALUES ( {0}, {1} , {2});""".format(user_id, question_id,
                                                           answer_count)
     except Exception:
-        raise UserWarning
+        pass
 
     cur.execute(query)
     conn.commit()
@@ -87,7 +87,7 @@ def add_question(question_id):
     try:
         query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
     except Exception:
-        raise UserWarning
+        pass
     cur.execute(query)
     conn.commit()
 
@@ -100,7 +100,7 @@ def delete_question(user_id, question_id):
         cur.execute(query)
         conn.commit()
     except Exception:
-        raise UserWarning
+        pass
 
 
 def get_all_user_id():

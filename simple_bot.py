@@ -9,6 +9,7 @@ monitoring_list = collections.defaultdict(set)
 
 def start(bot, update):
     update.message.reply_text('Hi!')
+    update.message.reply_text(update.message.chat_id)
     if database_script.check_user_to_be_in_db(update.message.chat_id,
                                               update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')

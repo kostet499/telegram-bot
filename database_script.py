@@ -26,7 +26,7 @@ def create_rel_table(conn):
 def create_question_table(conn):
     cur.execute('''
               CREATE TABLE IF NOT EXISTS questions(
-                id INTEGER NOT NULL PRIMARY KEY
+                id INT NOT NULL PRIMARY KEY
               );
           ''')
 
@@ -84,11 +84,8 @@ def insert_into_user_question(user_id, question_id, answer_count):
 
 def add_question(question_id):
     query = "INSERT INTO questions(id) VALUES ({0})".format(question_id)
-    try:
-        cur.execute(query)
-        conn.commit()
-    except Exception:
-        pass
+    cur.execute(query)
+    conn.commit()
 
 
 def delete_question(user_id, question_id):

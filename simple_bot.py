@@ -72,7 +72,7 @@ def del_question(bot, update, args):
         bot.send_message(chat_id=chat_id,
                          text="Successfully deleted question")
     except Exception:
-        bot.send_message(chat_id=chat_id,
+        bot.send_message(chat_id=update.message.chat_id,
                          text="Sorry, no question to delete")
 
 

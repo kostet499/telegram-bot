@@ -55,6 +55,8 @@ def add_question(bot, update, args):
     database_script.add_question(question_id)
     user_id = database_script.get_user_id(user_name)
     database_script.insert_into_user_question(user_id, question_id, ans_count)
+    message = 'Answers ' + str(ans_count)
+    bot.send_message(chat_id='@' + user_name, text=message)
 
 
 def del_question(bot, update, args):

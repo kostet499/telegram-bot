@@ -32,18 +32,15 @@ def create_question_table(conn):
 
 def check_user_to_be_in_db(chat_id, username):
     """Add user to database if he is new"""
-    query = "SELECT id FROM users WHERE id = %d;" % chat_id
-    cur.execute(query)
-    row = cur.fetchone()
-    if row is None:
+    try:
         query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(
             chat_id,
             username)
         cur.execute(query)
         conn.commit()
         return True
-
-    return False
+    except Exception:
+        return False
 
 
 def get_user_id(username):

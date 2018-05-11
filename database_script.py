@@ -1,7 +1,6 @@
 import sqlite3
 
 def create_user_table(conn):
-    cur.execute('DROP TABLE IF EXISTS users')
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INT NOT NULL PRIMARY KEY,
@@ -33,15 +32,15 @@ def create_question_table(conn):
 
 def check_user_to_be_in_db(chat_id, username):
     """Add user to database if he is new"""
-    query = "SELECT name FROM users WHERE name = (\"%s\")" % username
+    query = "SELECT id FROM users WHERE id = %d;" % chat_id
     cur.execute(query)
     row = cur.fetchone()
     if row is None:
         query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(
-            str(chat_id),
+            chat_id,
             username)
         cur.execute(query)
-        conn.commit()        
+        conn.commit()
         return True
 
     return False

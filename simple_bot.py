@@ -8,11 +8,12 @@ monitoring_list = collections.defaultdict(set)
 
 
 def start(bot, update):
-    update.message.reply_text('Hi, @{}!'.format(update.effective_user.username))
+    update.message.reply_text('Hi!')
     if database_script.check_user_to_be_in_db(update.message.chat_id,
                                               update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')
-    update.message.reply_text(str(database_script.get_all_user_id()) + 'sdasa')
+
+    update.message.reply_text('Bye!')
 
 def count_answers(bot, update, args):
     question_id = retreive_question_id(args[0])

@@ -20,7 +20,7 @@ def count_answers(bot, update, args):
     answer = stf_parser.get_answer_quantity(args[0], True)
     if answer is None:
         update.message.reply_text("It is not stackoverflow question link")
-    update.message.reply_text(answer)
+    update.message.reply_text(str(answer))
 
 
 def form_link(question_id):
@@ -48,7 +48,7 @@ def add_question(bot, update, args):
         question_id = int(args[0])
     except Exception:
         question_id = int(re.search(r'/[0-9]*/', args[0]).group(0))
-
+    update.message.reply_text('kekel')
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     user_name = update.effective_user.username
     monitoring_list[user_name].add(question_id)

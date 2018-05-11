@@ -22,7 +22,7 @@ def get_answer_quantity(html, is_link):
     except AttributeError:
         return None
     quest_sum = re.sub(r'h2|[^0-9]', '', quest_sum)
-    return quest_sum
+    return int(quest_sum)
 
 
 def get_answer_id_list(html):

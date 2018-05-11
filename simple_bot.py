@@ -2,8 +2,9 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import stf_parser
 import database_script
 import re
+import collections
 
-monitoring_list = dict()
+monitoring_list = collections.defaultdict(set)
 
 
 def start(bot, update):
@@ -11,7 +12,6 @@ def start(bot, update):
     if database_script.check_user_to_be_in_db(update.message.chat_id,
                                               update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')
-        monitoring_list[update.message.chat_id] = set()
 
 
 def count_answers(bot, update, args):
@@ -105,7 +105,7 @@ def main():
 
     updater.job_queue.run_repeating(callback_check_question,
                                     interval=10,
-                                    first=0)
+                                    first=100)
     updater.start_polling()
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,

@@ -47,7 +47,7 @@ def check_user_to_be_in_db(chat_id, username):
 
 
 def get_user_id(username):
-    query = "SELECT id FROM users WHERE name = (\"%s\")" % username
+    query = "SELECT id FROM users WHERE name = (\"%s\");" % username
     return cur.execute(query).fetchone()
     
 
@@ -58,14 +58,14 @@ def compare_answers(user_id, question_id, answer_count):
 
     query = '''SELECT ans_number FROM user_question
               WHERE user_id = {0} and
-              question_id  = {1} '''.format(user_id, question_id)
+              question_id  = {1};'''.format(user_id, question_id)
 
     answer = cur.execute(query).fetchone()
     if answer == answer_count:
         return True
 
     query = """UPDATE user_question SET ans_number = {2}
-              WHERE user_id = {0} and question_id = {1}
+              WHERE user_id = {0} and question_id = {1};
             """.format(user_id, question_id, answer_count)
 
     cur.execute(query)
@@ -83,7 +83,7 @@ def insert_into_user_question(user_id, question_id, answer_count):
 
 
 def add_question(question_id):
-    query = "INSERT INTO questions(id) VALUES ({0})".format(question_id)
+    query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
     cur.execute(query)
     conn.commit()
 
@@ -91,7 +91,7 @@ def add_question(question_id):
 def delete_question(user_id, question_id):
     query = '''DELETE FROM user_question
                   WHERE user_id = {0} and
-                  question_id  = {1} '''.format(user_id, question_id)
+                  question_id  = {1};'''.format(user_id, question_id)
     try:
         cur.execute(query)
         conn.commit()
@@ -100,15 +100,17 @@ def delete_question(user_id, question_id):
 
 
 def get_all_user_id():
-    query = "SELECT id FROM users"
+    query = "SELECT id FROM users;"
     return list(cur.execute(query).fetchall())
 
 
 def get_question_by_user_id(user_id):
     query = """SELECT question_id from user_question
-            WHERE user_id = {0}
+            WHERE user_id = {};
             """.format(user_id)
-    return cur.execute(query).fetchall()
+    cur.execute(query)
+    answer = cur.fetchall()
+    return answer
 
 
 def close_database():

@@ -107,7 +107,7 @@ def main():
 
     updater.job_queue.run_repeating(callback_check_question,
                                     interval=10,
-                                    first=100)
+                                    first=10)
     updater.start_polling()
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,

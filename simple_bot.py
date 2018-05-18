@@ -42,6 +42,13 @@ def callback_check_question(bot, job):
         for question_id in questions:
             new_answer_quantity = stf_parser.get_answer_quantity(
                 form_link(question_id), True)
+            if new_answer_quantity is None:
+                bot.send_message(chat_id=chat_id,
+                                 text="Bad link deleted " + form_link(
+                                     question_id))
+                database_script.delete_question(chat_id, question_id)
+                monitoring_list[chat_id].remove(question_id)
+                continue
             if database_script.compare_answers(chat_id,
                                                question_id,
                                                new_answer_quantity):
@@ -55,6 +62,9 @@ def add_question(bot, update, args):
     """Add question to db and monitoring list"""
     question_id = retreive_question_id(args[0])
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
+    if ans_count is None:
+        update.message.reply_text("Link is bad")
+        return
     chat_id = update.message.chat_id
     monitoring_list[chat_id].add(question_id)
     database_script.add_question(question_id)

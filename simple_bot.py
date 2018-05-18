@@ -9,12 +9,10 @@ monitoring_list = collections.defaultdict(set)
 
 def start(bot, update):
     update.message.reply_text('Hi!')
-    update.message.reply_text(update.message.chat_id)
     if database_script.check_user_to_be_in_db(update.message.chat_id,
                                               update.effective_user.username):
         update.message.reply_text('Let\'s get familiar with you')
 
-    update.message.reply_text('Bye!')
 
 def count_answers(bot, update, args):
     question_id = retreive_question_id(args[0])
@@ -54,6 +52,7 @@ def callback_check_question(bot, job):
 
 
 def add_question(bot, update, args):
+    """Add question to db and monitoring list"""
     question_id = retreive_question_id(args[0])
     ans_count = stf_parser.get_answer_quantity(form_link(question_id), True)
     chat_id = update.message.chat_id
@@ -65,7 +64,7 @@ def add_question(bot, update, args):
 
 
 def del_question(bot, update, args):
-    """Delete the question from monitoring list"""
+    """Delete the question from db and monitoring list"""
     question_id = retreive_question_id(args[0])
     try:
         chat_id = update.message.chat_id
@@ -79,12 +78,13 @@ def del_question(bot, update, args):
 
 
 def unknown(bot, update):
+    """Operate with unknown command"""
     bot.send_message(chat_id=update.message.chat_id,
                      text='It is wrong command')
 
 
 def fill_monitoring_list():
-    """Fill monitoring list"""
+    """Load user data from database"""
     for chat_id in database_script.get_all_user_id():
         monitoring_list[chat_id] = set(
             database_script.get_question_by_user_id(chat_id))

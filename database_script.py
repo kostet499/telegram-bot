@@ -15,6 +15,7 @@ def create_user_table():
 
 
 def create_rel_table():
+    """Create relation table"""
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
     cur.execute('''
@@ -60,6 +61,7 @@ def check_user_to_be_in_db(chat_id, username):
 
 
 def get_user_id(username):
+    """Get user id by username"""
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
     query = "SELECT id FROM users WHERE name = (\"%s\");" % username
@@ -110,6 +112,7 @@ def insert_into_user_question(user_id, question_id, answer_count):
 
 
 def add_question(question_id):
+    """Add question to question table"""
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
     query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
@@ -122,6 +125,7 @@ def add_question(question_id):
 
 
 def delete_question(user_id, question_id):
+    """Delete question from user_question table"""
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
     query = '''DELETE FROM user_question

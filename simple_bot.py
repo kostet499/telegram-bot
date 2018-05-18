@@ -38,6 +38,7 @@ def retreive_question_id(link):
 
 
 def callback_check_question(bot, job):
+    deleted_question = collections.defaultdict(int)
     for chat_id, questions in monitoring_list.items():
         for question_id in questions:
             new_answer_quantity = stf_parser.get_answer_quantity(
@@ -47,7 +48,7 @@ def callback_check_question(bot, job):
                                  text="Bad link deleted " + form_link(
                                      question_id))
                 database_script.delete_question(chat_id, question_id)
-                monitoring_list[chat_id].remove(question_id)
+                deleted_question[chat_id] = question_id
                 continue
             if database_script.compare_answers(chat_id,
                                                question_id,
@@ -56,6 +57,9 @@ def callback_check_question(bot, job):
 
             text_message = "New answers \n(\"%s\")" % (form_link(question_id))
             bot.send_message(chat_id=chat_id, text=text_message)
+
+    for chat_id, question_id in deleted_question.items():
+        monitoring_list[chat_id].remove(question_id)
 
 
 def add_question(bot, update, args):

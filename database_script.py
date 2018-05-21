@@ -6,7 +6,7 @@ def create_user_table():
     cur = conn.cursor()
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INT NOT NULL PRIMARY KEY,
+            id INT PRIMARY KEY,
             name VARCHAR(255)
         );
     ''')
@@ -37,7 +37,7 @@ def create_question_table():
     cur = conn.cursor()
     cur.execute('''
               CREATE TABLE IF NOT EXISTS questions(
-                id INT NOT NULL PRIMARY KEY
+                id INT PRIMARY KEY
               );
           ''')
     conn.commit()

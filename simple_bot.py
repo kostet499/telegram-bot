@@ -3,8 +3,7 @@ import stf_parser
 import database_script
 import re
 import collections
-
-monitoring_list = collections.defaultdict(set)
+import config
 
 
 def start(bot, update):
@@ -39,7 +38,7 @@ def retreive_question_id(link):
 
 def callback_check_question(bot, job):
     deleted_question = collections.defaultdict(int)
-    for chat_id, questions in monitoring_list.items():
+    for chat_id, questions in config.monitoring_list.items():
         for question_id in questions:
             new_answer_quantity = stf_parser.get_answer_quantity(
                 form_link(question_id), True)
@@ -59,7 +58,7 @@ def callback_check_question(bot, job):
             bot.send_message(chat_id=chat_id, text=text_message)
 
     for chat_id, question_id in deleted_question.items():
-        monitoring_list[chat_id].remove(question_id)
+        config.monitoring_list[chat_id].remove(question_id)
 
 
 def add_question(bot, update, args):
@@ -70,7 +69,7 @@ def add_question(bot, update, args):
         update.message.reply_text("Link is bad")
         return
     chat_id = update.message.chat_id
-    monitoring_list[chat_id].add(question_id)
+    config.monitoring_list[chat_id].add(question_id)
     database_script.add_question(question_id)
     database_script.insert_into_user_question(chat_id, question_id, ans_count)
     message = 'Answers ' + str(ans_count)
@@ -82,7 +81,7 @@ def del_question(bot, update, args):
     question_id = retreive_question_id(args[0])
     try:
         chat_id = update.message.chat_id
-        monitoring_list[chat_id].remove(question_id)
+        config.monitoring_list[chat_id].remove(question_id)
         database_script.delete_question(chat_id, question_id)
         bot.send_message(chat_id=chat_id,
                          text="Successfully deleted question")
@@ -100,14 +99,13 @@ def unknown(bot, update):
 def fill_monitoring_list():
     """Load user data from database"""
     for chat_id in database_script.get_all_user_id():
-        monitoring_list[chat_id] = set(
+        config.monitoring_list[chat_id] = set(
             database_script.get_question_by_user_id(chat_id))
 
 
 def main():
     updater = Updater(open('token').read())
     dp = updater.dispatcher
-    fill_monitoring_list()
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))

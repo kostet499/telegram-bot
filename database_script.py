@@ -10,7 +10,6 @@ def connection_to_database(func):
         answer = func(conn, cur, *args)
         conn.close()
         return answer
-
     return wrapper
 
 
@@ -80,8 +79,8 @@ def compare_answers(connection, cursor, user_id, question_id, answer_count):
      of the question from database
      and update it"""
     query = '''SELECT ans_number FROM user_question
-              WHERE user_id = {0} AND
-              question_id  = {1};'''.format(user_id, question_id)
+            WHERE user_id = {0} AND
+            question_id  = {1};'''.format(user_id, question_id)
 
     cursor.execute(query)
     answer = cursor.fetchone()[0]
@@ -89,7 +88,7 @@ def compare_answers(connection, cursor, user_id, question_id, answer_count):
         return True
 
     query = """UPDATE user_question SET ans_number = {2}
-              WHERE user_id = {0} AND question_id = {1};
+            WHERE user_id = {0} AND question_id = {1};
             """.format(user_id, question_id, answer_count)
 
     cursor.execute(query)
@@ -98,11 +97,9 @@ def compare_answers(connection, cursor, user_id, question_id, answer_count):
 
 
 @connection_to_database
-def insert_into_user_question(conn, cur, user_id, question_id, answer_count):
+def insert_into_user_question(conn, cur, user_id, question_id, ans_count):
     query = """INSERT INTO user_question(user_id, question_id, ans_number)
-                         VALUES ( {0}, {1} , {2});""".format(user_id,
-                                                             question_id,
-                                                             answer_count)
+            VALUES ({0}, {1} , {2});""".format(user_id, question_id, ans_count)
     try:
         cur.execute(query)
         conn.commit()
@@ -125,8 +122,8 @@ def add_question(conn, cur, question_id):
 def delete_question(conn, cur, user_id, question_id):
     """Delete question from user_question table"""
     query = '''DELETE FROM user_question
-                  WHERE user_id = {0} AND
-                  question_id  = {1};'''.format(user_id, question_id)
+            WHERE user_id = {0} AND
+            question_id  = {1};'''.format(user_id, question_id)
     try:
         cur.execute(query)
         conn.commit()

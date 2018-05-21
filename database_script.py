@@ -1,9 +1,21 @@
 import sqlite3
+import functools
 
 
-def create_user_table():
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
+def connection_to_database(func):
+    @functools.wraps(func)
+    def wrapper(*args):
+        conn = sqlite3.connect('stackquestion.db')
+        cur = conn.cursor()
+        answer = func(conn, cur, *args)
+        conn.close()
+        return answer
+
+    return wrapper
+
+
+@connection_to_database
+def create_user_table(conn, cur):
     cur.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INT PRIMARY KEY,
@@ -11,13 +23,11 @@ def create_user_table():
         );
     ''')
     conn.commit()
-    conn.close()
 
 
-def create_rel_table():
+@connection_to_database
+def create_rel_table(conn, cur):
     """Create relation table"""
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     cur.execute('''
           CREATE TABLE IF NOT EXISTS user_question(
               user_id INT NOT NULL,
@@ -29,54 +39,46 @@ def create_rel_table():
               );
       ''')
     conn.commit()
-    conn.close()
 
 
-def create_question_table():
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
+@connection_to_database
+def create_question_table(conn, cur):
     cur.execute('''
               CREATE TABLE IF NOT EXISTS questions(
                 id INT PRIMARY KEY
               );
           ''')
     conn.commit()
-    conn.close()
 
 
-def check_user_to_be_in_db(chat_id, username):
+@connection_to_database
+def check_user_to_be_in_db(conn, cur, chat_id, username):
     """Add user to database if he is new"""
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     try:
         query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(
             chat_id,
             username)
         cur.execute(query)
         conn.commit()
-        conn.close()
         return True
     except Exception:
         return False
 
 
-def get_user_id(username):
+@connection_to_database
+def get_user_id(conn, cur, username):
     """Get user id by username"""
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     query = "SELECT id FROM users WHERE name = (\"%s\");" % username
     cur.execute(query)
     answer = cur.fetchone()[0]
-    conn.close()
     return answer
-    
 
-def compare_answers(user_id, question_id, answer_count):
+
+@connection_to_database
+def compare_answers(connection, cursor, user_id, question_id, answer_count):
     """Compare last answer count with new
      of the question from database
      and update it"""
-    connection = sqlite3.connect('stackquestion.db')
-    cursor = connection.cursor()
     query = '''SELECT ans_number FROM user_question
               WHERE user_id = {0} AND
               question_id  = {1};'''.format(user_id, question_id)
@@ -92,13 +94,11 @@ def compare_answers(user_id, question_id, answer_count):
 
     cursor.execute(query)
     connection.commit()
-    connection.close()
     return False
 
 
-def insert_into_user_question(user_id, question_id, answer_count):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
+@connection_to_database
+def insert_into_user_question(conn, cur, user_id, question_id, answer_count):
     query = """INSERT INTO user_question(user_id, question_id, ans_number)
                          VALUES ( {0}, {1} , {2});""".format(user_id,
                                                              question_id,
@@ -106,54 +106,46 @@ def insert_into_user_question(user_id, question_id, answer_count):
     try:
         cur.execute(query)
         conn.commit()
-        conn.close()
     except Exception:
         return
 
 
-def add_question(question_id):
+@connection_to_database
+def add_question(conn, cur, question_id):
     """Add question to question table"""
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     query = "INSERT INTO questions(id) VALUES ({0});".format(question_id)
     try:
         cur.execute(query)
         conn.commit()
-        conn.close()
     except Exception:
         return
 
 
-def delete_question(user_id, question_id):
+@connection_to_database
+def delete_question(conn, cur, user_id, question_id):
     """Delete question from user_question table"""
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
     query = '''DELETE FROM user_question
                   WHERE user_id = {0} AND
                   question_id  = {1};'''.format(user_id, question_id)
     try:
         cur.execute(query)
         conn.commit()
-        conn.close()
     except Exception:
         return
 
 
-def get_all_user_id():
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
+@connection_to_database
+def get_all_user_id(conn, cur):
     query = "SELECT id FROM users;"
     cur.execute(query)
     answer = list()
     for x in cur.fetchall():
         answer.append(x[0])
-    conn.close()
     return list(answer)
 
 
-def get_question_by_user_id(user_id):
-    conn = sqlite3.connect('stackquestion.db')
-    cur = conn.cursor()
+@connection_to_database
+def get_question_by_user_id(conn, cur, user_id):
     query = """SELECT question_id FROM user_question
             WHERE user_id = {};
             """.format(user_id)
@@ -161,7 +153,6 @@ def get_question_by_user_id(user_id):
     answer = list()
     for x in cur.fetchall():
         answer.append(x[0])
-    conn.close()
     return answer
 
 

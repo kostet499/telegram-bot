@@ -78,7 +78,7 @@ def compare_answers(user_id, question_id, answer_count):
     connection = sqlite3.connect('stackquestion.db')
     cursor = connection.cursor()
     query = '''SELECT ans_number FROM user_question
-              WHERE user_id = {0} and
+              WHERE user_id = {0} AND
               question_id  = {1};'''.format(user_id, question_id)
 
     cursor.execute(query)
@@ -87,7 +87,7 @@ def compare_answers(user_id, question_id, answer_count):
         return True
 
     query = """UPDATE user_question SET ans_number = {2}
-              WHERE user_id = {0} and question_id = {1};
+              WHERE user_id = {0} AND question_id = {1};
             """.format(user_id, question_id, answer_count)
 
     cursor.execute(query)
@@ -129,7 +129,7 @@ def delete_question(user_id, question_id):
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
     query = '''DELETE FROM user_question
-                  WHERE user_id = {0} and
+                  WHERE user_id = {0} AND
                   question_id  = {1};'''.format(user_id, question_id)
     try:
         cur.execute(query)
@@ -154,7 +154,7 @@ def get_all_user_id():
 def get_question_by_user_id(user_id):
     conn = sqlite3.connect('stackquestion.db')
     cur = conn.cursor()
-    query = """SELECT question_id from user_question
+    query = """SELECT question_id FROM user_question
             WHERE user_id = {};
             """.format(user_id)
     cur.execute(query)

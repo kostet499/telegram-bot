@@ -21,13 +21,11 @@ def get_answer_quantity(html, is_link):
         html = get_html_doc(html)
         if html is None:
             return None
-    quest_sum = re.search(r'<h2 data-answercount="[0-9]*">', html)
+    quest_sum = re.search(r'<h2 data-answercount="([0-9]*)">', html)
     try:
-        quest_sum = quest_sum.group(0)
+        return int(quest_sum.group(1))
     except AttributeError:
         return None
-    quest_sum = re.sub(r'h2|[^0-9]', '', quest_sum)
-    return int(quest_sum)
 
 
 def get_answer_id_list(html):

@@ -101,6 +101,12 @@ def fill_monitoring_list():
         config.monitoring_list[chat_id] = set(database_script.get_question_by_user_id(chat_id))
 
 
+def help(bot, update):
+    update.message.reply_text('/count_answers <id/link of question>')
+    update.message.reply_text('/add_question <id/link of question>')
+    update.message.reply_text('/del_question <id/link of question>')
+
+
 def main():
     updater = Updater(open('token').read())
     dp = updater.dispatcher
@@ -113,6 +119,8 @@ def main():
                                   add_question, pass_args=True))
     dp.add_handler(CommandHandler('del_question',
                                   del_question, pass_args=True))
+    dp.add_handler(CommandHandler('help', help))
+
     dp.add_handler(MessageHandler(Filters.command, unknown))
 
     updater.job_queue.run_repeating(callback_check_question,

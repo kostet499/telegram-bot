@@ -54,8 +54,7 @@ def create_question_table(conn, cur):
 def check_user_to_be_in_db(conn, cur, chat_id, username):
     """Add user to database if he is new"""
     try:
-        query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(
-            chat_id, username)
+        query = "INSERT INTO users(id, name) VALUES ({0}, \"{1}\");".format(chat_id, username)
         cur.execute(query)
         conn.commit()
         return True

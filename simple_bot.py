@@ -1,9 +1,11 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import stf_parser
-import database_script
-import re
 import collections
+import re
+
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
 import config
+import database_script
+import stf_parser
 
 
 def start(bot, update):
@@ -31,8 +33,7 @@ def retreive_question_id(link):
         question_id = int(link)
     except Exception:
         question_id = int(
-            re.search(r'[0-9]+', re.search(r'/[0-9]+/', link).group(0)).group(
-                0))
+            re.search(r'[0-9]+', re.search(r'/[0-9]+/', link).group(0)).group(0))
     return question_id
 
 
@@ -40,12 +41,10 @@ def callback_check_question(bot, job):
     deleted_question = collections.defaultdict(int)
     for chat_id, questions in config.monitoring_list.items():
         for question_id in questions:
-            new_answer_quantity = stf_parser.get_answer_quantity(
-                form_link(question_id), True)
+            new_answer_quantity = stf_parser.get_answer_quantity(form_link(question_id), True)
             if new_answer_quantity is None:
                 bot.send_message(chat_id=chat_id,
-                                 text="Bad link deleted " + form_link(
-                                     question_id))
+                                 text="Bad link deleted " + form_link(question_id))
                 database_script.delete_question(chat_id, question_id)
                 deleted_question[chat_id] = question_id
                 continue
@@ -99,8 +98,7 @@ def unknown(bot, update):
 def fill_monitoring_list():
     """Load user data from database"""
     for chat_id in database_script.get_all_user_id():
-        config.monitoring_list[chat_id] = set(
-            database_script.get_question_by_user_id(chat_id))
+        config.monitoring_list[chat_id] = set(database_script.get_question_by_user_id(chat_id))
 
 
 def main():
